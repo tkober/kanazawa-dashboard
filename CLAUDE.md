@@ -21,8 +21,10 @@ beide.
   Kacheln sind echte `<a href>`, damit Mittelklick/Neuer Tab funktionieren.
 
 Health-Checks laufen serverseitig, weil der Browser ohne CORS-Header den
-Status fremder Origins nicht lesen kann. Im Container löst `kanazawa.local`
-nur über `extra_hosts: kanazawa.local:host-gateway` auf (siehe README).
+Status fremder Origins nicht lesen kann. Die Server-Adresse steht nur einmal
+im Feld `host` in `apps.yaml` und wird als `{host}` in `url`/`health`
+eingesetzt (IP statt `kanazawa.local`, weil mDNS-Namen über WireGuard und in
+Containern nicht auflösen); kein `extra_hosts` mehr nötig (siehe README).
 
 ## Tests
 

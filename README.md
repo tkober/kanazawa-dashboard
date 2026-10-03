@@ -16,8 +16,11 @@ Button „Aktualisieren“ neu geprüft.
 
 Welche Apps angezeigt werden und wo sie liegen, steht in
 [`config/apps.yaml`](config/apps.yaml); die Felder sind dort oben beschrieben.
-Die Datei wird ins Backend-Image gebacken: Änderung committen, auf `main`
-pushen, CI baut ein neues Image, Stack neu deployen.
+Die Server-Adresse steht nur einmal im Feld `host` (eine IP, kein
+`kanazawa.local`, weil mDNS-Namen über WireGuard und in Containern nicht
+auflösen); in `url` und `health` wird sie per `{host}` eingesetzt. Die Datei
+wird ins Backend-Image gebacken: Änderung committen, auf `main` pushen, CI
+baut ein neues Image, Stack neu deployen.
 
 Alternativ lässt sich eine Datei auf dem Server mounten (`APPS_CONFIG`, siehe
 unten). Das Backend liest sie bei jeder Änderung neu ein, ein Neustart ist dann
@@ -34,8 +37,8 @@ config/    apps.yaml
 
 Die Health-Checks laufen **im Backend**, nicht im Browser: die Apps liegen auf
 anderen Origins ohne CORS-Header, der Browser könnte ihren Status nicht lesen.
-Deshalb müssen die Hostnamen in `apps.yaml` auch im Backend-Container
-auflösbar sein (siehe `extra_hosts` unten).
+Deshalb muss `host` in `apps.yaml` eine Adresse sein, die auch vom
+Backend-Container aus erreichbar ist.
 
 API:
 
@@ -53,10 +56,8 @@ services:
     image: ghcr.io/tkober/kanazawa-dashboard-backend:latest
     container_name: kanazawa-dashboard-backend
     restart: unless-stopped
-    # mDNS-Namen lösen in Containern nicht auf; so zeigt kanazawa.local auf
-    # den Host, und die Health-Checks erreichen die veröffentlichten Ports.
-    extra_hosts:
-      - "kanazawa.local:host-gateway"
+    # Erreicht die Apps über die Host-IP in apps.yaml (host: ...); kein
+    # extra_hosts nötig, da kein mDNS-Name aufgelöst werden muss.
     # optional: Config auf dem Server statt im Image
     # environment:
     #   APPS_CONFIG: /config/apps.yaml
