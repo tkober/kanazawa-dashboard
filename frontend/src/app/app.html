@@ -1,0 +1,65 @@
+<header class="top">
+  <div>
+    <h1>{{ config()?.title ?? 'Dashboard' }}</h1>
+    @if (config(); as c) {
+      <p class="summary">
+        @if (lastChecked()) {
+          <strong>{{ upCount() }}/{{ c.apps.length }}</strong> online
+          <span class="muted">· geprüft {{ lastChecked() | date: 'HH:mm:ss' }}</span>
+        } @else {
+          <span class="muted">Prüfe Status…</span>
+        }
+      </p>
+    }
+  </div>
+  <button
+    type="button"
+    class="refresh"
+    (click)="refresh()"
+    [disabled]="checking()"
+    title="Status neu prüfen"
+  >
+    <span class="refresh-icon" [class.spinning]="checking()">↻</span>
+    <span class="refresh-label">Aktualisieren</span>
+  </button>
+</header>
+
+@if (configError(); as error) {
+  <p class="banner error">{{ error }}</p>
+}
+@if (statusError()) {
+  <p class="banner warn">
+    Status-Abfrage fehlgeschlagen – das Dashboard-Backend ist nicht erreichbar.
+  </p>
+}
+
+<main>
+  @for (group of groups(); track group.name) {
+    <section>
+      @if (group.name) {
+        <h2>{{ group.name }}</h2>
+      }
+      <div class="grid">
+        @for (app of group.apps; track app.id) {
+          @let status = statuses()[app.id];
+          <a class="tile" [href]="app.url" [attr.data-state]="status?.state ?? 'pending'">
+            <div class="icon" aria-hidden="true">{{ app.icon ?? app.name.charAt(0) }}</div>
+            <div class="body">
+              <div class="name">{{ app.name }}</div>
+              @if (app.description) {
+                <div class="description">{{ app.description }}</div>
+              }
+              <div class="meta">
+                <span class="status">
+                  <span class="dot"></span>
+                  {{ label(status) }}
+                </span>
+                <span class="host">{{ host(app.url) }}</span>
+              </div>
+            </div>
+          </a>
+        }
+      </div>
+    </section>
+  }
+</main>

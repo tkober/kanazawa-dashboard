@@ -1,0 +1,82 @@
+# Apps shown on the dashboard, in this order.
+#
+#   name         required  tile title
+#   url          required  where a click on the tile goes
+#   health       optional  what the backend probes for the status indicator:
+#                          a path (resolved against url), an absolute URL
+#                          (e.g. an API on its own port), or omitted to probe
+#                          url itself. Any HTTP answer < 400 counts as up.
+#   description  optional  one line under the title
+#   icon         optional  an emoji
+#   group        optional  tiles with the same group are shown together
+#   id           optional  defaults to a slug of name
+#
+# The health checks run inside the dashboard backend container, so its
+# hostnames must resolve there too (see extra_hosts in the README).
+
+title: Kanazawa
+
+apps:
+  - name: Trip Planner
+    url: http://kanazawa.local:8080
+    health: http://kanazawa.local:8001/health
+    description: Reisen planen
+    icon: 🗺️
+    group: Tools
+
+  - name: Footage Archive
+    url: http://kanazawa.local:8082
+    health: /api/version
+    description: Video-Archiv durchsuchen und umbenennen
+    icon: 🎞️
+    group: Tools
+
+  - name: Katakana Reading
+    url: http://kanazawa.local:8083
+    health: /api/health
+    description: Katakana lesen üben
+    icon: ア
+    group: Japanisch
+
+  - name: JP Conjugation
+    url: http://kanazawa.local:8084
+    health: /api/health
+    description: Konjugation üben
+    icon: 活
+    group: Japanisch
+
+  - name: JP Conversation Practice
+    url: http://kanazawa.local:8085
+    health: /api/health
+    description: Gespräche üben
+    icon: 💬
+    group: Japanisch
+
+  - name: Kanji Trainer
+    url: http://kanazawa.local:8086
+    health: /api/health
+    description: Kanji lernen
+    icon: 漢
+    group: Japanisch
+
+  - name: Anki MCP
+    url: http://kanazawa.local:3141
+    # AnkiConnect lives in the same container and answers plain GETs.
+    health: http://kanazawa.local:8765
+    description: Headless Anki mit MCP-Server
+    icon: 🃏
+    group: Japanisch
+
+  - name: n8n
+    url: http://kanazawa.local:5678
+    health: /healthz
+    description: Shisa AI Workflows
+    icon: ⚙️
+    group: Shisa AI
+
+  - name: Shisa AI Core
+    url: http://kanazawa.local:8000/docs
+    health: http://kanazawa.local:8000/health
+    description: Core-API (Swagger)
+    icon: 🦁
+    group: Shisa AI

@@ -1,0 +1,260 @@
+:root {
+  color-scheme: dark;
+  --bg: #0f1115;
+  --surface: #181b22;
+  --surface-hover: #1f232c;
+  --border: #2a2f3a;
+  --text: #e8eaef;
+  --muted: #8b92a1;
+  --up: #3ecf8e;
+  --unhealthy: #f5a524;
+  --down: #f16063;
+  --pending: #5b6272;
+  font-family:
+    system-ui,
+    -apple-system,
+    'Segoe UI',
+    Roboto,
+    'Hiragino Sans',
+    'Noto Sans JP',
+    sans-serif;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  min-height: 100vh;
+  background: var(--bg);
+  color: var(--text);
+}
+
+app-root {
+  display: block;
+  max-width: 1100px;
+  margin: 0 auto;
+  padding: 32px 20px 48px;
+}
+
+.top {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 16px;
+  margin-bottom: 24px;
+}
+
+h1 {
+  margin: 0;
+  font-size: 28px;
+  font-weight: 700;
+  letter-spacing: -0.01em;
+}
+
+.summary {
+  margin: 4px 0 0;
+  font-size: 14px;
+}
+
+.muted {
+  color: var(--muted);
+}
+
+.refresh {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 14px;
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  background: var(--surface);
+  color: var(--text);
+  font: inherit;
+  font-size: 14px;
+  cursor: pointer;
+}
+
+.refresh:hover:not(:disabled) {
+  background: var(--surface-hover);
+}
+
+.refresh:disabled {
+  cursor: default;
+  opacity: 0.7;
+}
+
+.refresh-icon {
+  display: inline-block;
+  font-size: 16px;
+  line-height: 1;
+}
+
+.spinning {
+  animation: spin 0.9s linear infinite;
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.banner {
+  margin: 0 0 20px;
+  padding: 10px 14px;
+  border-radius: 10px;
+  font-size: 14px;
+}
+
+.banner.error {
+  background: color-mix(in srgb, var(--down) 15%, transparent);
+  border: 1px solid color-mix(in srgb, var(--down) 40%, transparent);
+}
+
+.banner.warn {
+  background: color-mix(in srgb, var(--unhealthy) 12%, transparent);
+  border: 1px solid color-mix(in srgb, var(--unhealthy) 40%, transparent);
+}
+
+section + section {
+  margin-top: 28px;
+}
+
+h2 {
+  margin: 0 0 12px;
+  font-size: 13px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--muted);
+}
+
+.grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+  gap: 12px;
+}
+
+.tile {
+  --state: var(--pending);
+  display: flex;
+  gap: 14px;
+  padding: 16px;
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  background: var(--surface);
+  color: inherit;
+  text-decoration: none;
+  transition:
+    background 0.15s,
+    border-color 0.15s,
+    transform 0.15s;
+}
+
+.tile:hover,
+.tile:focus-visible {
+  background: var(--surface-hover);
+  border-color: color-mix(in srgb, var(--state) 50%, var(--border));
+  transform: translateY(-1px);
+  outline: none;
+}
+
+.tile[data-state='up'] {
+  --state: var(--up);
+}
+
+.tile[data-state='unhealthy'] {
+  --state: var(--unhealthy);
+}
+
+.tile[data-state='down'] {
+  --state: var(--down);
+}
+
+.icon {
+  flex: none;
+  display: grid;
+  place-items: center;
+  width: 44px;
+  height: 44px;
+  border-radius: 12px;
+  background: color-mix(in srgb, var(--text) 7%, transparent);
+  font-size: 22px;
+  font-weight: 600;
+}
+
+.body {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+  flex: 1;
+}
+
+.name {
+  font-size: 16px;
+  font-weight: 600;
+}
+
+.description {
+  margin-top: 2px;
+  font-size: 13px;
+  color: var(--muted);
+}
+
+.meta {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 4px 10px;
+  margin-top: auto;
+  padding-top: 12px;
+  font-size: 12px;
+}
+
+.status {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  color: var(--state);
+  font-weight: 500;
+}
+
+.tile[data-state='pending'] .status {
+  color: var(--muted);
+}
+
+.dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: var(--state);
+}
+
+.tile[data-state='up'] .dot {
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--up) 25%, transparent);
+}
+
+.host {
+  color: var(--muted);
+  font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+@media (max-width: 520px) {
+  app-root {
+    padding-top: 20px;
+  }
+
+  .refresh-label {
+    display: none;
+  }
+
+  .grid {
+    grid-template-columns: 1fr;
+  }
+}
