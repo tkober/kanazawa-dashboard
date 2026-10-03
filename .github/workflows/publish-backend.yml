@@ -9,6 +9,8 @@ on:
       - "config/**"
       - ".github/workflows/publish-backend.yml"
     tags: ["v*.*.*"]
+  # Manual rebuild, e.g. to republish without a code change.
+  workflow_dispatch:
 
 permissions:
   contents: read
