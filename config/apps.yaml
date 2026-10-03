@@ -89,6 +89,12 @@ apps:
     icon: 🦁
     group: Shisa AI
 
+  - name: Unraid
+    url: http://{host}
+    description: Server-Verwaltung
+    icon: 🖥️
+    group: Infrastruktur
+
   - name: Adminer
     url: http://{host}:8081
     description: Postgres-Datenbanken verwalten
