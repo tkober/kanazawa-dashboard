@@ -1,5 +1,8 @@
 # Apps shown on the dashboard, in this order.
 #
+#   host         optional  the server address (hostname or IP, optionally with
+#                          a port), substituted for {host} in url and health
+#                          below. Set once here instead of repeating it.
 #   name         required  tile title
 #   url          required  where a click on the tile goes
 #   health       optional  what the backend probes for the status indicator:
@@ -11,78 +14,83 @@
 #   group        optional  tiles with the same group are shown together
 #   id           optional  defaults to a slug of name
 #
-# The health checks run inside the dashboard backend container, so its
-# hostnames must resolve there too (see extra_hosts in the README).
+# The health checks run inside the dashboard backend container, so {host}
+# must be reachable from there too (see README).
+
+# One place for the server address: links and health checks all go through
+# {host}. An IP rather than kanazawa.local, because mDNS names don't resolve
+# over WireGuard or inside containers.
+host: 192.168.2.230
 
 title: Kanazawa
 
 apps:
   - name: Trip Planner
-    url: http://kanazawa.local:8080
-    health: http://kanazawa.local:8001/health
+    url: http://{host}:8080
+    health: http://{host}:8001/health
     description: Reisen planen
     icon: 🗺️
     group: Tools
 
   - name: Footage Archive
-    url: http://kanazawa.local:8082
+    url: http://{host}:8082
     health: /api/version
     description: Video-Archiv durchsuchen und umbenennen
     icon: 🎞️
     group: Tools
 
   - name: Katakana Reading
-    url: http://kanazawa.local:8083
+    url: http://{host}:8083
     health: /api/health
     description: Katakana lesen üben
     icon: ア
     group: Japanisch
 
   - name: JP Conjugation
-    url: http://kanazawa.local:8084
+    url: http://{host}:8084
     health: /api/health
     description: Konjugation üben
     icon: 活
     group: Japanisch
 
   - name: JP Conversation Practice
-    url: http://kanazawa.local:8085
+    url: http://{host}:8085
     health: /api/health
     description: Gespräche üben
     icon: 💬
     group: Japanisch
 
   - name: Kanji Trainer
-    url: http://kanazawa.local:8086
+    url: http://{host}:8086
     health: /api/health
     description: Kanji lernen
     icon: 漢
     group: Japanisch
 
   - name: Anki MCP
-    url: http://kanazawa.local:3141
+    url: http://{host}:3141
     # AnkiConnect lives in the same container and answers plain GETs.
-    health: http://kanazawa.local:8765
+    health: http://{host}:8765
     description: Headless Anki mit MCP-Server
     icon: 🃏
     group: Japanisch
 
   - name: n8n
-    url: http://kanazawa.local:5678
+    url: http://{host}:5678
     health: /healthz
     description: Shisa AI Workflows
     icon: ⚙️
     group: Shisa AI
 
   - name: Shisa AI Core
-    url: http://kanazawa.local:8000/docs
-    health: http://kanazawa.local:8000/health
+    url: http://{host}:8000/docs
+    health: http://{host}:8000/health
     description: Core-API (Swagger)
     icon: 🦁
     group: Shisa AI
 
   - name: Adminer
-    url: http://kanazawa.local:8081
+    url: http://{host}:8081
     description: Postgres-Datenbanken verwalten
     icon: 🐘
     group: Infrastruktur

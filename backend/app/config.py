@@ -51,12 +51,34 @@ def _require_http_url(value: str, field: str, app_name: str) -> str:
     return value
 
 
+def _require_host(value: object) -> str:
+    # Just the server address (hostname or IP, optionally with a port), no
+    # scheme and no path — it's substituted straight into a URL.
+    host = str(value)
+    if not host or "://" in host or "/" in host:
+        raise ConfigError(f"'host' must be a bare hostname/IP (optionally with a port), got {value!r}")
+    return host
+
+
+def _resolve_host(value: str, app_name: str, host: str | None) -> str:
+    # {host} is substituted before urljoin/validation so it can appear
+    # anywhere in url or health. Plain str.replace, not str.format: URLs may
+    # contain other braces.
+    if "{host}" not in value:
+        return value
+    if host is None:
+        raise ConfigError(f"{app_name}: uses {{host}} but no top-level 'host' is set")
+    return value.replace("{host}", host)
+
+
 def parse(raw: object) -> Dashboard:
     if not isinstance(raw, dict):
         raise ConfigError("apps.yaml must be a mapping with an 'apps' list")
     entries = raw.get("apps")
     if not isinstance(entries, list) or not entries:
         raise ConfigError("apps.yaml needs a non-empty 'apps' list")
+
+    host = _require_host(raw["host"]) if raw.get("host") is not None else None
 
     apps: list[App] = []
     seen: set[str] = set()
@@ -68,12 +90,14 @@ def parse(raw: object) -> Dashboard:
         if not name or not url:
             raise ConfigError(f"apps[{i}] needs at least 'name' and 'url'")
         name, url = str(name), str(url)
+        url = _resolve_host(url, name, host)
         _require_http_url(url, "url", name)
 
         # health: omitted → probe the app URL itself; a path → relative to
         # the app URL; an absolute URL → used as is (e.g. a separate API port).
         health = entry.get("health")
-        health_url = urljoin(url, str(health)) if health else url
+        health = _resolve_host(str(health), name, host) if health else None
+        health_url = urljoin(url, health) if health else url
         _require_http_url(health_url, "health", name)
 
         app_id = str(entry.get("id") or _slug(name))

@@ -107,6 +107,14 @@ async def test_config_reloads_on_change(client, apps_yaml, upstream):
         ({"apps": [{"name": "x"}]}, "'name' and 'url'"),
         ({"apps": [{"name": "x", "url": "kanazawa:80"}]}, "must be an absolute http"),
         ({"apps": [{"name": "a b", "url": "http://h"}, {"name": "a-b", "url": "http://h"}]}, "duplicate"),
+        ({"apps": [{"name": "x", "url": "http://{host}:80"}]}, "uses \\{host\\} but no top-level 'host'"),
+        (
+            {"apps": [{"name": "x", "url": "http://h", "health": "{host}/x"}]},
+            "uses \\{host\\} but no top-level 'host'",
+        ),
+        ({"host": "http://x", "apps": [{"name": "x", "url": "http://h"}]}, "bare hostname"),
+        ({"host": "x/y", "apps": [{"name": "x", "url": "http://h"}]}, "bare hostname"),
+        ({"host": "", "apps": [{"name": "x", "url": "http://h"}]}, "bare hostname"),
     ],
 )
 def test_invalid_config_is_rejected(raw, message):
@@ -114,7 +122,28 @@ def test_invalid_config_is_rejected(raw, message):
         config.parse(raw)
 
 
+def test_host_is_substituted_in_url_and_health(upstream):
+    # upstream is "http://127.0.0.1:<port>"; strip the scheme to use as host.
+    host = upstream.removeprefix("http://")
+    raw = {
+        "host": host,
+        "apps": [
+            {"name": "Absolute", "url": "http://{host}/", "health": "http://{host}/ok"},
+            {"name": "Relative Health", "url": "http://{host}/", "health": "/ok"},
+        ],
+    }
+    dashboard = config.parse(raw)
+    assert dashboard.apps[0].url == f"{upstream}/"
+    assert dashboard.apps[0].health_url == f"{upstream}/ok"
+    # relative health is resolved against the already-substituted url
+    assert dashboard.apps[1].health_url == f"{upstream}/ok"
+
+
 def test_shipped_config_is_valid():
     with config.DEFAULT_CONFIG.open(encoding="utf-8") as f:
         dashboard = config.parse(yaml.safe_load(f))
     assert dashboard.apps
+    for app in dashboard.apps:
+        for url in (app.url, app.health_url):
+            assert "kanazawa.local" not in url
+            assert "{host}" not in url
