@@ -80,3 +80,9 @@ apps:
     description: Core-API (Swagger)
     icon: 🦁
     group: Shisa AI
+
+  - name: Adminer
+    url: http://kanazawa.local:8081
+    description: Postgres-Datenbanken verwalten
+    icon: 🐘
+    group: Infrastruktur

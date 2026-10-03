@@ -78,7 +78,7 @@ services:
       kanazawa-dashboard-backend:
         condition: service_healthy
     ports:
-      - "8081:80"
+      - "8087:80"
     networks:
       - kanazawa-dashboard-net
 
