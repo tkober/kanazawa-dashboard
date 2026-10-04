@@ -1,8 +1,8 @@
 # Kanazawa Dashboard
 
 Eine bookmarkbare Startseite für alle Apps auf Kanazawa: eine Kachel pro App,
-ein Klick öffnet die App, und ein Punkt zeigt an, ob die App gerade erreichbar
-ist.
+ein Klick öffnet die App in einem neuen Tab, und ein Punkt zeigt an, ob die
+App gerade erreichbar ist.
 
 - **grün, Online**: der Health-Endpoint antwortet mit einem Status < 400
   (inkl. Antwortzeit)

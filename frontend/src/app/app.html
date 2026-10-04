@@ -45,8 +45,9 @@
           <a
             class="tile"
             [href]="app.url"
+            target="_blank"
+            rel="noopener"
             [attr.data-state]="status?.state ?? 'pending'"
-            (click)="onTileClick($event, app)"
           >
             <div class="icon" aria-hidden="true">{{ app.icon ?? app.name.charAt(0) }}</div>
             <div class="body">
@@ -68,14 +69,3 @@
     </section>
   }
 </main>
-
-@if (opening(); as app) {
-  <div class="opening-overlay" role="status" aria-live="polite">
-    <div class="opening-card">
-      <div class="opening-icon" aria-hidden="true">{{ app.icon ?? app.name.charAt(0) }}</div>
-      <div class="spinner" aria-hidden="true"></div>
-      <p class="opening-text">Öffne {{ app.name }}…</p>
-      <button type="button" class="opening-cancel" (click)="cancelOpening()">Abbrechen</button>
-    </div>
-  </div>
-}

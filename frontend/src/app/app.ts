@@ -28,9 +28,6 @@ export class App {
   protected readonly checking = signal(false);
   protected readonly lastChecked = signal<Date | null>(null);
 
-  /** App whose tile was just clicked; shows the "opening" overlay while navigation is in flight. */
-  protected readonly opening = signal<AppEntry | null>(null);
-
   /** Apps grouped in order of first appearance in apps.yaml. */
   protected readonly groups = computed<Group[]>(() => {
     const groups: Group[] = [];
@@ -64,26 +61,14 @@ export class App {
       if (document.visibilityState === 'visible') this.refresh();
     };
     document.addEventListener('visibilitychange', onVisible);
-    // Returning via the back button from bfcache must not leave a stuck overlay.
-    const onPageShow = (event: PageTransitionEvent) => {
-      if (event.persisted) this.opening.set(null);
-    };
-    window.addEventListener('pageshow', onPageShow);
-    // Escape cancels the pending navigation, same as the "Abbrechen" button.
-    const onKeydown = (event: KeyboardEvent) => {
-      if (event.key === 'Escape' && this.opening()) this.cancelOpening();
-    };
-    document.addEventListener('keydown', onKeydown);
     inject(DestroyRef).onDestroy(() => {
       clearInterval(timer);
       document.removeEventListener('visibilitychange', onVisible);
-      window.removeEventListener('pageshow', onPageShow);
-      document.removeEventListener('keydown', onKeydown);
     });
   }
 
   protected refresh(): void {
-    if (this.checking() || this.opening()) return;
+    if (this.checking()) return;
     this.checking.set(true);
     this.api.status().subscribe({
       next: (statuses) => {
@@ -97,26 +82,6 @@ export class App {
         this.checking.set(false);
       },
     });
-  }
-
-  /** Lets a plain left click through to the anchor, but shows the "opening" overlay for it. */
-  protected onTileClick(event: MouseEvent, app: AppEntry): void {
-    if (this.opening()) {
-      // Already navigating; don't let a second click fire another navigation.
-      event.preventDefault();
-      return;
-    }
-    const isPlainLeftClick =
-      event.button === 0 && !event.ctrlKey && !event.metaKey && !event.shiftKey && !event.altKey;
-    if (!isPlainLeftClick) return;
-    // No preventDefault: the anchor navigates normally, we just overlay on top of it.
-    this.opening.set(app);
-  }
-
-  /** Cancels the pending navigation (Abbrechen button or Escape key). */
-  protected cancelOpening(): void {
-    window.stop();
-    this.opening.set(null);
   }
 
   protected host(url: string): string {

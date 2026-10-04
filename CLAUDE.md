@@ -18,7 +18,8 @@ beide.
 - `backend/app/main.py`: `/api/apps` liefert die Health-URLs bewusst nicht aus.
 - `frontend/`: eine Komponente (`app.ts`), Styles global in `src/styles.css`.
   Zwei getrennte Requests: Kacheln erscheinen sofort, Status kommt nach.
-  Kacheln sind echte `<a href>`, damit Mittelklick/Neuer Tab funktionieren.
+  Kacheln sind echte `<a href target="_blank">`, damit sie in einem neuen Tab
+  öffnen und das Dashboard offen bleibt.
 
 Health-Checks laufen serverseitig, weil der Browser ohne CORS-Header den
 Status fremder Origins nicht lesen kann. Die Server-Adresse steht nur einmal
