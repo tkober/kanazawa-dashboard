@@ -100,3 +100,9 @@ apps:
     description: Postgres-Datenbanken verwalten
     icon: 🐘
     group: Infrastruktur
+
+  - name: Rclone
+    url: http://{host}:5572
+    description: Rclone Web-UI
+    icon: ☁️
+    group: Infrastruktur
