@@ -89,6 +89,13 @@ apps:
     icon: 🦁
     group: Shisa AI
 
+  - name: Jellyfin
+    url: http://{host}:8096
+    health: /health
+    description: Filme und Serien
+    icon: 🎬
+    group: Medien
+
   - name: Unraid
     url: http://{host}
     description: Server-Verwaltung
