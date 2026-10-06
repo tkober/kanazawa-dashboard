@@ -32,6 +32,7 @@ class App:
     description: str | None = None
     icon: str | None = None
     group: str | None = None
+    accent: str | None = None
 
 
 @dataclass(frozen=True)
@@ -58,6 +59,15 @@ def _require_host(value: object) -> str:
     if not host or "://" in host or "/" in host:
         raise ConfigError(f"'host' must be a bare hostname/IP (optionally with a port), got {value!r}")
     return host
+
+
+def _require_accent(value: object, app_name: str) -> str:
+    # Kept deliberately loose: any CSS colour syntax (hex, rgb(), named
+    # colour, ...) is valid, so we only reject non-strings and the empty
+    # string rather than trying to parse CSS colours ourselves.
+    if not isinstance(value, str) or not value.strip():
+        raise ConfigError(f"{app_name}: 'accent' must be a non-empty string, got {value!r}")
+    return value
 
 
 def _resolve_host(value: str, app_name: str, host: str | None) -> str:
@@ -105,6 +115,9 @@ def parse(raw: object) -> Dashboard:
             raise ConfigError(f"duplicate app id {app_id!r} (set 'id' explicitly)")
         seen.add(app_id)
 
+        accent = entry.get("accent")
+        accent = _require_accent(accent, name) if accent is not None else None
+
         apps.append(
             App(
                 id=app_id,
@@ -114,6 +127,7 @@ def parse(raw: object) -> Dashboard:
                 description=entry.get("description"),
                 icon=entry.get("icon"),
                 group=entry.get("group"),
+                accent=accent,
             )
         )
 

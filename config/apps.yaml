@@ -12,6 +12,8 @@
 #   description  optional  one line under the title
 #   icon         optional  an emoji
 #   group        optional  tiles with the same group are shown together
+#   accent       optional  a CSS colour string (e.g. a hex code), used by
+#                          clients for app-specific theming
 #   id           optional  defaults to a slug of name
 #
 # The health checks run inside the dashboard backend container, so {host}
@@ -45,6 +47,7 @@ apps:
     description: Katakana lesen üben
     icon: ア
     group: Japanisch
+    accent: "#c98a0b"
 
   - name: JP Conjugation
     url: http://{host}:8084
@@ -52,6 +55,7 @@ apps:
     description: Konjugation üben
     icon: 活
     group: Japanisch
+    accent: "#6b4f96"
 
   - name: JP Conversation Practice
     url: http://{host}:8085
@@ -59,6 +63,7 @@ apps:
     description: Gespräche üben
     icon: 💬
     group: Japanisch
+    accent: "#1f7a80"
 
   - name: Kanji Trainer
     url: http://{host}:8086
@@ -66,6 +71,7 @@ apps:
     description: Kanji lernen
     icon: 漢
     group: Japanisch
+    accent: "#2b4c7e"
 
   - name: Anki MCP
     url: http://{host}:3141
