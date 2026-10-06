@@ -41,6 +41,7 @@ apps:
     url: {upstream}/
     health: /ok
     icon: ✅
+    accent: "#c98a0b"
   - name: Redirecting
     url: {upstream}/redirect
   - name: Broken
@@ -74,7 +75,23 @@ async def test_apps_lists_config_without_health_urls(client, apps_yaml, upstream
         "description": None,
         "icon": "✅",
         "group": None,
+        "accent": "#c98a0b",
     }
+    # apps without an accent emit it as null, like the other optional fields.
+    assert body["apps"][1]["accent"] is None
+
+
+async def test_apps_sends_wildcard_cors_header(client, apps_yaml):
+    response = await client.get("/api/apps", headers={"Origin": "http://example.test"})
+    assert response.headers["access-control-allow-origin"] == "*"
+
+
+async def test_status_and_health_have_no_cors_header(client, apps_yaml):
+    status_response = await client.get("/api/status", headers={"Origin": "http://example.test"})
+    assert "access-control-allow-origin" not in status_response.headers
+
+    health_response = await client.get("/api/health", headers={"Origin": "http://example.test"})
+    assert "access-control-allow-origin" not in health_response.headers
 
 
 async def test_status_classifies_each_app(client, apps_yaml):
@@ -115,6 +132,14 @@ async def test_config_reloads_on_change(client, apps_yaml, upstream):
         ({"host": "http://x", "apps": [{"name": "x", "url": "http://h"}]}, "bare hostname"),
         ({"host": "x/y", "apps": [{"name": "x", "url": "http://h"}]}, "bare hostname"),
         ({"host": "", "apps": [{"name": "x", "url": "http://h"}]}, "bare hostname"),
+        (
+            {"apps": [{"name": "x", "url": "http://h", "accent": 123}]},
+            "'accent' must be a non-empty string",
+        ),
+        (
+            {"apps": [{"name": "x", "url": "http://h", "accent": ""}]},
+            "'accent' must be a non-empty string",
+        ),
     ],
 )
 def test_invalid_config_is_rejected(raw, message):
