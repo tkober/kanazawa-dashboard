@@ -1,6 +1,6 @@
 from dataclasses import asdict
 
-from fastapi import FastAPI, HTTPException
+from fastapi import FastAPI, HTTPException, Response
 
 from . import config, health
 
@@ -20,7 +20,15 @@ async def own_health() -> dict[str, str]:
 
 
 @app.get("/api/apps")
-async def apps() -> dict:
+async def apps(response: Response) -> dict:
+    # Allow cross-origin reads of this one route: the Japanese learning apps
+    # (other origins/ports) show an app switcher that fetches this list from
+    # the browser (see sumi-ui concept doc, "App-Umschalter"). The list is
+    # read-only and never contains health URLs, so a wildcard is fine here;
+    # /api/status and /api/health intentionally stay without CORS headers.
+    # A plain GET needs no preflight, so setting the header on this response
+    # is enough — no need for CORSMiddleware on the whole app.
+    response.headers["Access-Control-Allow-Origin"] = "*"
     dashboard = _dashboard()
     return {
         "title": dashboard.title,
