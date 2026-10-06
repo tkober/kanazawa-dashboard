@@ -44,7 +44,7 @@ API:
 
 | Route             | Inhalt                                                |
 |-------------------|-------------------------------------------------------|
-| `GET /api/apps`   | Titel und Apps aus `apps.yaml` (ohne Health-URLs)     |
+| `GET /api/apps`   | Titel und Apps aus `apps.yaml` (ohne Health-URLs); cross-origin lesbar (`Access-Control-Allow-Origin: *`) für den App-Umschalter der Japanisch-Apps ([Konzept](https://github.com/tkober/sumi-ui/blob/main/docs/concept.md#app-umschalter)) |
 | `GET /api/status` | Status je App-ID; Ergebnisse werden 10 s gecacht      |
 | `GET /api/health` | Health des Dashboards selbst                          |
 
