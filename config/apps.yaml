@@ -44,7 +44,7 @@ apps:
   - name: Katakana Reading
     url: http://{host}:8083
     health: /api/health
-    description: Katakana lesen üben
+    description: Practise reading katakana
     icon: ア
     group: Japanisch
     accent: "#c98a0b"
@@ -52,7 +52,7 @@ apps:
   - name: JP Conjugation
     url: http://{host}:8084
     health: /api/health
-    description: Konjugation üben
+    description: Practise verb and adjective conjugation
     icon: 活
     group: Japanisch
     accent: "#6b4f96"
@@ -60,7 +60,7 @@ apps:
   - name: JP Conversation Practice
     url: http://{host}:8085
     health: /api/health
-    description: Gespräche üben
+    description: Practise spoken conversation
     icon: 💬
     group: Japanisch
     accent: "#1f7a80"
@@ -68,7 +68,7 @@ apps:
   - name: Kanji Trainer
     url: http://{host}:8086
     health: /api/health
-    description: Kanji lernen
+    description: Learn kanji with spaced repetition
     icon: 漢
     group: Japanisch
     accent: "#2b4c7e"
