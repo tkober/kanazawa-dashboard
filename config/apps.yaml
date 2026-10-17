@@ -55,7 +55,7 @@ apps:
     description: Practise verb and adjective conjugation
     icon: 活
     group: Japanisch
-    accent: "#6b4f96"
+    accent: "#c62828"
 
   - name: JP Conversation Practice
     url: http://{host}:8085
@@ -72,6 +72,14 @@ apps:
     icon: 漢
     group: Japanisch
     accent: "#2b4c7e"
+
+  - name: JP Reading Practice
+    url: http://{host}:8088
+    health: /api/health
+    description: Practise reading Japanese texts
+    icon: 読
+    group: Japanisch
+    accent: "#007b43"
 
   - name: Anki MCP
     url: http://{host}:3141
